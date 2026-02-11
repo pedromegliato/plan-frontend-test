@@ -24,4 +24,12 @@ describe('getContinentDisplayName', () => {
   it('should return continent as fallback when not in CONTINENT_NAMES', () => {
     expect(getContinentDisplayName('Unknown')).toBe('Unknown')
   })
+
+  it('should handle subregion without northern/central/south keywords', () => {
+    expect(getContinentDisplayName('Americas', 'Unknown Americas')).toBe('Américas')
+  })
+
+  it('should return continent name for Africa', () => {
+    expect(getContinentDisplayName('Africa')).toBe('África')
+  })
 })

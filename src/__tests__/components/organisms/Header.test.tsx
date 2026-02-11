@@ -18,10 +18,18 @@ describe('Header', () => {
     expect(logo).toHaveAttribute('src', expect.stringContaining('LOGO'))
   })
 
-  it('should render logo with priority loading', () => {
+  it('should render logo with correct dimensions', () => {
     render(<Header />)
 
     const logo = screen.getByRole('img', { name: /plan international/i })
-    expect(logo).toHaveAttribute('fetchpriority', 'high')
+    expect(logo).toHaveAttribute('width', '150')
+    expect(logo).toHaveAttribute('height', '60')
+  })
+
+  it('should render logo wrapped in link to home', () => {
+    render(<Header />)
+
+    const link = screen.getByRole('link')
+    expect(link).toHaveAttribute('href', '/')
   })
 })

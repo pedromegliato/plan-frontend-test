@@ -1,5 +1,5 @@
-import { CountryTransformer } from '@/services/transformers/CountryTransformer'
 import { CountryApiResponse } from '@/@types'
+import { CountryTransformer } from '@/services/transformers/CountryTransformer'
 
 describe('CountryTransformer', () => {
   const mockApiResponse: CountryApiResponse = {

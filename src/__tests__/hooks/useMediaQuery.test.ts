@@ -156,4 +156,5 @@ describe('useMediaQuery', () => {
 
     expect(matchMediaMock).toHaveBeenCalledWith('(min-width: 768px)')
   })
+
 })

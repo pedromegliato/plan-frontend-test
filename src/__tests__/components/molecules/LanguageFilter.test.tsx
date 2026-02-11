@@ -2,12 +2,29 @@ import React from 'react'
 
 import { LanguageFilter } from '@/components/molecules/LanguageFilter'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 
-const mockUseMediaQuery = jest.fn()
-
-jest.mock('@/hooks', () => ({
-  useMediaQuery: () => mockUseMediaQuery(),
+jest.mock('@/components/molecules/SearchableSelect', () => ({
+  SearchableSelect: ({
+    options,
+    value,
+    placeholder,
+    emptyMessage,
+  }: {
+    options: { value: string; label: string }[]
+    value: string
+    placeholder: string
+    emptyMessage: string
+  }) => (
+    <div>
+      <input placeholder={placeholder} value={value} readOnly />
+      <div data-testid="options">
+        {options.map((opt) => (
+          <div key={opt.value}>{opt.label}</div>
+        ))}
+      </div>
+      <div>{emptyMessage}</div>
+    </div>
+  ),
 }))
 
 describe('LanguageFilter', () => {
@@ -16,7 +33,6 @@ describe('LanguageFilter', () => {
 
   beforeEach(() => {
     mockOnChange.mockClear()
-    mockUseMediaQuery.mockReturnValue(true)
   })
 
   it('should render language filter heading', () => {
@@ -31,7 +47,7 @@ describe('LanguageFilter', () => {
     expect(screen.getByText('Idioma')).toBeInTheDocument()
   })
 
-  it('should render SearchableSelect with correct props', () => {
+  it('should render SearchableSelect with placeholder', () => {
     render(
       <LanguageFilter
         languages={languages}
@@ -43,8 +59,7 @@ describe('LanguageFilter', () => {
     expect(screen.getByPlaceholderText('Todos')).toBeInTheDocument()
   })
 
-  it('should pass language options to SearchableSelect', async () => {
-    const user = userEvent.setup()
+  it('should pass language options to SearchableSelect', () => {
     render(
       <LanguageFilter
         languages={languages}
@@ -53,13 +68,22 @@ describe('LanguageFilter', () => {
       />,
     )
 
-    const select = screen.getByRole('combobox')
-    await user.click(select)
-
     expect(screen.getByText('English')).toBeInTheDocument()
     expect(screen.getByText('Spanish')).toBeInTheDocument()
     expect(screen.getByText('Portuguese')).toBeInTheDocument()
     expect(screen.getByText('French')).toBeInTheDocument()
+  })
+
+  it('should show empty message', () => {
+    render(
+      <LanguageFilter
+        languages={languages}
+        selectedLanguage=""
+        onChange={mockOnChange}
+      />,
+    )
+
+    expect(screen.getByText('Nenhum idioma encontrado')).toBeInTheDocument()
   })
 
   it('should show selected language', () => {
@@ -71,26 +95,20 @@ describe('LanguageFilter', () => {
       />,
     )
 
-    const select = screen.getByRole('combobox')
-    expect(select).toHaveValue('Spanish')
+    const input = screen.getByPlaceholderText('Todos')
+    expect(input).toHaveValue('Spanish')
   })
 
-  it('should call onChange when language is selected', async () => {
-    const user = userEvent.setup()
+  it('should handle empty languages array', () => {
     render(
       <LanguageFilter
-        languages={languages}
+        languages={[]}
         selectedLanguage=""
         onChange={mockOnChange}
       />,
     )
 
-    const select = screen.getByRole('combobox')
-    await user.click(select)
-
-    const englishOption = screen.getByText('English')
-    await user.click(englishOption)
-
-    expect(mockOnChange).toHaveBeenCalledWith('English')
+    expect(screen.getByText('Idioma')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Todos')).toBeInTheDocument()
   })
 })

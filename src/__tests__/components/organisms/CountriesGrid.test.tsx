@@ -45,7 +45,7 @@ describe('CountriesGrid', () => {
 
     expect(screen.getByText('Nenhum país encontrado')).toBeInTheDocument()
     expect(
-      screen.getByText('Tente ajustar seus filtros de busca'),
+      screen.getByText('Ajuste os filtros para ver resultados'),
     ).toBeInTheDocument()
   })
 

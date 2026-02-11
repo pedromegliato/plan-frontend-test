@@ -1,7 +1,7 @@
-import { renderHook, act, waitFor } from '@testing-library/react'
 import { useCountries } from '@/hooks/useCountries'
 import * as storeModule from '@/store'
 import * as countriesModule from '@/store/modules/countries'
+import { renderHook, act, waitFor } from '@testing-library/react'
 
 jest.mock('@/store', () => ({
   useAppDispatch: jest.fn(),

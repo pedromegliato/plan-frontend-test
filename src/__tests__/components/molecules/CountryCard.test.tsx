@@ -108,4 +108,37 @@ describe('CountryCard', () => {
     const article = container.querySelector('article')
     expect(article).toBeInTheDocument()
   })
+
+  it('should use CONTINENT_NAMES when no subregion provided', () => {
+    const africaCountry = {
+      ...mockCountry,
+      continent: 'Africa',
+      subregion: undefined,
+    }
+    render(<CountryCard country={africaCountry} />)
+
+    expect(screen.getByText('África')).toBeInTheDocument()
+  })
+
+  it('should fallback to continent name when subregion does not match special cases', () => {
+    const europeCountry = {
+      ...mockCountry,
+      continent: 'Europe',
+      subregion: 'Western Europe',
+    }
+    render(<CountryCard country={europeCountry} />)
+
+    expect(screen.getByText('Europa')).toBeInTheDocument()
+  })
+
+  it('should fallback to original continent string when not in CONTINENT_NAMES', () => {
+    const unknownContinent = {
+      ...mockCountry,
+      continent: 'Antarctica',
+      subregion: undefined,
+    }
+    render(<CountryCard country={unknownContinent} />)
+
+    expect(screen.getByText('Antarctica')).toBeInTheDocument()
+  })
 })

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { FilterDrawer } from '@/components/molecules/FilterDrawer'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 describe('FilterDrawer', () => {
@@ -82,7 +82,7 @@ describe('FilterDrawer', () => {
       </FilterDrawer>,
     )
 
-    const backdrop = document.querySelector('.bg-black\/60')
+    const backdrop = document.querySelector('[aria-hidden="true"]')
     if (backdrop) {
       await user.click(backdrop)
     }
@@ -104,7 +104,7 @@ describe('FilterDrawer', () => {
       </FilterDrawer>,
     )
 
-    const applyButton = screen.getByText('Aplicar')
+    const applyButton = screen.getByText(/aplicar filtros/i)
     await user.click(applyButton)
 
     expect(mockOnApply).toHaveBeenCalledTimes(1)
@@ -125,7 +125,7 @@ describe('FilterDrawer', () => {
       </FilterDrawer>,
     )
 
-    const clearButton = screen.getByText('Limpar')
+    const clearButton = screen.getByText(/limpar filtros/i)
     await user.click(clearButton)
 
     expect(mockOnClear).toHaveBeenCalledTimes(1)
@@ -144,7 +144,7 @@ describe('FilterDrawer', () => {
       </FilterDrawer>,
     )
 
-    const clearButton = screen.getByText('Limpar')
+    const clearButton = screen.getByText(/limpar filtros/i)
     expect(clearButton).toBeDisabled()
   })
 
@@ -161,7 +161,7 @@ describe('FilterDrawer', () => {
       </FilterDrawer>,
     )
 
-    const clearButton = screen.getByText('Limpar')
+    const clearButton = screen.getByText(/limpar filtros/i)
     expect(clearButton).not.toBeDisabled()
   })
 
@@ -240,5 +240,85 @@ describe('FilterDrawer', () => {
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('unset')
     })
+  })
+
+  it('should handle transition end when closed', () => {
+    const { rerender, container } = render(
+      <FilterDrawer
+        isOpen={true}
+        onClose={mockOnClose}
+        onApply={mockOnApply}
+        onClear={mockOnClear}
+        hasActiveFilters={false}
+      >
+        <div>Content</div>
+      </FilterDrawer>,
+    )
+
+    rerender(
+      <FilterDrawer
+        isOpen={false}
+        onClose={mockOnClose}
+        onApply={mockOnApply}
+        onClear={mockOnClear}
+        hasActiveFilters={false}
+      >
+        <div>Content</div>
+      </FilterDrawer>,
+    )
+
+    const drawer = container.querySelector('.fixed.inset-0')
+    if (drawer) {
+      const event = new Event('transitionend', { bubbles: true })
+      act(() => {
+        drawer.dispatchEvent(event)
+      })
+    }
+
+    expect(container).toBeTruthy()
+  })
+
+  it('should not trigger setIsAnimating when transition ends while open', () => {
+    const { container } = render(
+      <FilterDrawer
+        isOpen={true}
+        onClose={mockOnClose}
+        onApply={mockOnApply}
+        onClear={mockOnClear}
+        hasActiveFilters={false}
+      >
+        <div>Content</div>
+      </FilterDrawer>,
+    )
+
+    const drawer = container.querySelector('.fixed.inset-0')
+    if (drawer) {
+      const event = new Event('transitionend', { bubbles: true })
+      act(() => {
+        drawer.dispatchEvent(event)
+      })
+    }
+
+    // Drawer should still be visible
+    expect(drawer).toBeInTheDocument()
+  })
+
+  it('should not close on non-Escape key press', () => {
+    render(
+      <FilterDrawer
+        isOpen={true}
+        onClose={mockOnClose}
+        onApply={mockOnApply}
+        onClear={mockOnClear}
+        hasActiveFilters={false}
+      >
+        <div>Content</div>
+      </FilterDrawer>,
+    )
+
+    const event = new KeyboardEvent('keydown', { key: 'Enter' })
+    document.dispatchEvent(event)
+
+    expect(mockOnClose).not.toHaveBeenCalled()
   })
 })

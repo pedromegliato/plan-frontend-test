@@ -1,3 +1,4 @@
+import { CountriesState, Country } from '@/@types'
 import reducer, {
   fetchCountriesRequest,
   fetchCountriesSuccess,
@@ -12,7 +13,6 @@ import reducer, {
   nextPage,
   prevPage,
 } from '@/store/modules/countries/slice'
-import { CountriesState, Country } from '@/@types'
 
 const mockCountries: Country[] = [
   {
@@ -214,5 +214,204 @@ describe('countries slice', () => {
 
     state = reducer(state, prevPage())
     expect(state.pagination.currentPage).toBe(1)
+  })
+
+  it('should filter by North America continent', () => {
+    const northAmericaCountry: Country = {
+      ...mockCountries[0],
+      code: 'CA',
+      name: 'Canadá',
+      continent: 'North America',
+      region: 'Americas',
+      subregion: 'North America',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([northAmericaCountry]))
+    state = reducer(state, setContinents(['North America']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].subregion).toBe('North America')
+  })
+
+  it('should filter by Central America continent', () => {
+    const centralAmericaCountry: Country = {
+      ...mockCountries[0],
+      code: 'CR',
+      continent: 'Central America',
+      region: 'Americas',
+      subregion: 'Central America',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([centralAmericaCountry]))
+    state = reducer(state, setContinents(['Central America']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].subregion).toBe('Central America')
+  })
+
+  it('should filter by Caribbean (as Central America)', () => {
+    const caribbeanCountry: Country = {
+      ...mockCountries[0],
+      code: 'CU',
+      continent: 'Central America',
+      region: 'Americas',
+      subregion: 'Caribbean',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([caribbeanCountry]))
+    state = reducer(state, setContinents(['Central America']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].subregion).toBe('Caribbean')
+  })
+
+  it('should filter by Africa continent', () => {
+    const africaCountry: Country = {
+      ...mockCountries[0],
+      code: 'ZA',
+      continent: 'Africa',
+      region: 'Africa',
+      subregion: 'Southern Africa',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([africaCountry]))
+    state = reducer(state, setContinents(['Africa']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].continent).toBe('Africa')
+  })
+
+  it('should filter by Asia continent', () => {
+    const asiaCountry: Country = {
+      ...mockCountries[0],
+      code: 'JP',
+      continent: 'Asia',
+      region: 'Asia',
+      subregion: 'Eastern Asia',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([asiaCountry]))
+    state = reducer(state, setContinents(['Asia']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].continent).toBe('Asia')
+  })
+
+  it('should filter by Europe continent', () => {
+    const europeCountry: Country = {
+      ...mockCountries[0],
+      code: 'FR',
+      continent: 'Europe',
+      region: 'Europe',
+      subregion: 'Western Europe',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([europeCountry]))
+    state = reducer(state, setContinents(['Europe']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].continent).toBe('Europe')
+  })
+
+  it('should filter by Oceania continent', () => {
+    const oceaniaCountry: Country = {
+      ...mockCountries[0],
+      code: 'AU',
+      continent: 'Oceania',
+      region: 'Oceania',
+      subregion: 'Australia and New Zealand',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([oceaniaCountry]))
+    state = reducer(state, setContinents(['Oceania']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].continent).toBe('Oceania')
+  })
+
+  it('should filter by Antarctic continent', () => {
+    const antarcticCountry: Country = {
+      ...mockCountries[0],
+      code: 'AQ',
+      continent: 'Antarctic',
+      region: 'Antarctic',
+      subregion: 'Antarctic',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([antarcticCountry]))
+    state = reducer(state, setContinents(['Antarctic']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].continent).toBe('Antarctic')
+  })
+
+  it('should filter by continent using region field', () => {
+    const africaCountry: Country = {
+      ...mockCountries[0],
+      code: 'EG',
+      continent: 'Egypt',
+      region: 'Africa',
+      subregion: 'Northern Africa',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([africaCountry]))
+    state = reducer(state, setContinents(['Africa']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(1)
+    expect(state.filteredItems[0].region).toBe('Africa')
+  })
+
+  it('should return false for Americas without matching subregion', () => {
+    const americasCountry: Country = {
+      ...mockCountries[0],
+      region: 'Americas',
+      subregion: 'Unknown Americas Region',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([americasCountry]))
+    state = reducer(state, setContinents(['South America']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(0)
+  })
+
+  it('should return false for unknown continent filter', () => {
+    const unknownCountry: Country = {
+      ...mockCountries[0],
+      continent: 'Unknown',
+      region: 'Unknown',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([unknownCountry]))
+    state = reducer(state, setContinents(['Unknown Continent']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(0)
+  })
+
+  it('should return false for Americas country when filtering by non-Americas continent', () => {
+    const americasCountry: Country = {
+      ...mockCountries[0],
+      region: 'Americas',
+      subregion: 'South America',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([americasCountry]))
+    state = reducer(state, setContinents(['Europe']))
+    state = reducer(state, applyFilters())
+
+    expect(state.filteredItems).toHaveLength(0)
+  })
+
+  it('should handle Americas country without subregion', () => {
+    const { subregion: _subregion, ...countryWithoutSubregion } = mockCountries[0]
+    const americasCountryNoSubregion: Country = {
+      ...countryWithoutSubregion,
+      region: 'Americas',
+      subregion: '',
+    }
+    let state = reducer(initialState, fetchCountriesSuccess([americasCountryNoSubregion]))
+    state = reducer(state, setContinents(['North America']))
+    state = reducer(state, applyFilters())
+
+    // Should not match because subregion is empty
+    expect(state.filteredItems).toHaveLength(0)
   })
 })
