@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:18-slim AS base
 
 FROM base AS dependencies
 WORKDIR /app
@@ -16,8 +16,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs
+RUN useradd --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
