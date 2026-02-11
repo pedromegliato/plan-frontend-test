@@ -3,7 +3,7 @@ FROM node:20-slim AS base
 FROM base AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN rm -f package-lock.json && npm install
 
 FROM base AS builder
 WORKDIR /app
