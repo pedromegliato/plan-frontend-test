@@ -1,0 +1,55 @@
+graph TB
+    subgraph "Presentation Layer"
+        Pages[Pages<br/>app/page.tsx<br/>app/country/[code]/page.tsx]
+        Organisms[Organisms<br/>FilterBar<br/>CountriesGrid<br/>CountryDetailHeader<br/>CountryDetailInfo<br/>Footer]
+        Molecules[Molecules<br/>SearchBar<br/>CountryCard<br/>ContinentCheckbox<br/>SearchableSelect<br/>CountryFlag<br/>Pagination<br/>FilterDrawer]
+        Atoms[Atoms<br/>Button<br/>Input<br/>Select<br/>Checkbox<br/>Spinner<br/>ContinentIcon]
+    end
+
+    subgraph "Business Logic Layer"
+        Hooks[Custom Hooks<br/>useCountries<br/>useCountryDetail<br/>useDebounce<br/>useMediaQuery]
+        Redux[Redux Store<br/>Countries Slice<br/>Filters State<br/>Pagination State]
+        Saga[Redux Saga<br/>API Side Effects<br/>Async Operations]
+        Utils[Utils<br/>getContinentDisplayName<br/>cn className merger]
+    end
+
+    subgraph "Data Access Layer"
+        Service[CountryService<br/>Business Logic]
+        Repository[CountryRepository<br/>ICountryRepository]
+        Transformer[CountryTransformer<br/>Factory Pattern]
+        ApiClient[countriesApi<br/>Axios Instance]
+    end
+
+    subgraph "External Services"
+        RestCountries[REST Countries API<br/>v3.1]
+    end
+
+    Pages --> Organisms
+    Organisms --> Molecules
+    Molecules --> Atoms
+
+    Pages --> Hooks
+    Organisms --> Hooks
+
+    Hooks --> Redux
+    Redux --> Saga
+
+    Saga --> Service
+    Service --> Repository
+    Repository --> ApiClient
+    ApiClient --> RestCountries
+
+    RestCountries --> ApiClient
+    ApiClient --> Transformer
+    Transformer --> Saga
+    Saga --> Redux
+
+    classDef presentation fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef business fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef data fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef external fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+
+    class Pages,Organisms,Molecules,Atoms presentation
+    class Hooks,Redux,Saga business
+    class Service,Repository,Transformer,ApiClient data
+    class RestCountries external

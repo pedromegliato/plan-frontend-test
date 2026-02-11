@@ -1,0 +1,75 @@
+graph TD
+    App[RootLayout<br/>Providers Redux + Metadata]
+
+    App --> HomePage[Home Page<br/>Countries List]
+    App --> DetailsPage[Country Details Page<br/>Dynamic Route]
+
+    subgraph "Home Page Structure"
+        HomePage --> FilterBar
+        HomePage --> CountriesGrid
+        HomePage --> Pagination
+        HomePage --> Footer
+
+        FilterBar --> SearchBar
+        FilterBar --> SearchableSelect
+        FilterBar --> ContinentCheckbox1[ContinentCheckbox África]
+        FilterBar --> ContinentCheckbox2[ContinentCheckbox Ásia]
+        FilterBar --> ContinentCheckbox3[ContinentCheckbox Europa]
+        FilterBar --> ContinentCheckbox4[ContinentCheckbox Oceania]
+        FilterBar --> ContinentCheckbox5[ContinentCheckbox América Norte]
+        FilterBar --> ContinentCheckbox6[ContinentCheckbox América Central]
+        FilterBar --> ContinentCheckbox7[ContinentCheckbox América Sul]
+        FilterBar --> FilterDrawer
+        FilterBar --> ClearButton[Button Limpar Filtros]
+
+        SearchBar --> SearchIcon[Search Icon]
+        ContinentCheckbox1 --> CheckIcon1[Check Icon]
+        SearchableSelect --> ReactSelect[React Select]
+
+        CountriesGrid --> CountryCard1[CountryCard 1]
+        CountriesGrid --> CountryCard2[CountryCard 2]
+        CountriesGrid --> CountryCardN[CountryCard N]
+
+        CountryCard1 --> ContinentIcon1[ContinentIcon]
+        CountryCard1 --> CardFlag[Next Image]
+        CountryCard1 --> SeeMoreButton[Button Ver mais]
+    end
+
+    subgraph "Details Page Structure"
+        DetailsPage --> Logo[Plan Logo]
+        DetailsPage --> DetailContainer
+        DetailsPage --> Footer2[Footer]
+
+        DetailContainer --> CountryDetailHeader
+        DetailContainer --> ContentArea
+
+        ContentArea --> CountryFlag
+        ContentArea --> CountryDetailInfo
+
+        CountryDetailHeader --> ContinentIcon2[ContinentIcon]
+        CountryFlag --> FlagImage[Next Image]
+        CountryDetailInfo --> InfoList[Information List]
+
+        DetailContainer --> BackButton[Button Voltar]
+    end
+
+    subgraph "Atomic Design Levels"
+        Atoms[Atoms<br/>Button, Checkbox, Input<br/>Select, Spinner, ContinentIcon]
+        Molecules[Molecules<br/>SearchBar, CountryCard, ContinentCheckbox<br/>CountryFlag, Pagination, SearchableSelect<br/>FilterDrawer]
+        Organisms[Organisms<br/>FilterBar, CountriesGrid<br/>CountryDetailHeader, CountryDetailInfo<br/>Footer]
+        Pages[Pages<br/>Home app/page.tsx<br/>Country app/country/[code]/page.tsx]
+    end
+
+    Atoms -.-> Molecules
+    Molecules -.-> Organisms
+    Organisms -.-> Pages
+
+    classDef atom fill:#b3e5fc,stroke:#01579b,stroke-width:2px
+    classDef molecule fill:#c5e1a5,stroke:#33691e,stroke-width:2px
+    classDef organism fill:#ffcc80,stroke:#e65100,stroke-width:2px
+    classDef page fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+
+    class SearchIcon,CheckIcon1,ReactSelect,ClearButton,BackButton,SeeMoreButton,FlagImage,ContinentIcon1,ContinentIcon2,Logo,CardFlag atom
+    class SearchBar,ContinentCheckbox1,ContinentCheckbox2,ContinentCheckbox3,ContinentCheckbox4,ContinentCheckbox5,ContinentCheckbox6,ContinentCheckbox7,CountryCard1,CountryCard2,CountryCardN,CountryFlag,Pagination,SearchableSelect,FilterDrawer molecule
+    class FilterBar,CountriesGrid,CountryDetailHeader,CountryDetailInfo,DetailContainer,ContentArea,Footer,Footer2 organism
+    class HomePage,DetailsPage page

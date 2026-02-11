@@ -1,0 +1,65 @@
+@use 'tailwindcss';
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 16px;
+  --font-exo: 'Exo', sans-serif;
+  --color-dark-gray: #58595b;
+  --color-medium-gray: #707070;
+  --color-orange: #f58220;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(209 213 219) rgb(243 244 246);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgb(243 244 246);
+    border-radius: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgb(209 213 219);
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgb(156 163 175);
+    }
+  }
+}
+
+.font-exo {
+  font-family: var(--font-exo);
+}
+
+.bg-dark-gray {
+  background: var(--color-dark-gray);
+}
+
+.text-medium-gray {
+  color: var(--color-medium-gray);
+}
+
+.bg-orange {
+  background-color: var(--color-orange);
+}
+
+.min-h-card {
+  min-height: 238px;
+  height: auto;
+}

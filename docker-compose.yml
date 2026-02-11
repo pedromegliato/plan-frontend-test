@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  countries-explorer:
+    container_name: countries-explorer-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - countries-network
+
+networks:
+  countries-network:
+    driver: bridge

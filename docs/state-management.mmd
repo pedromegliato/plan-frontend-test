@@ -1,0 +1,82 @@
+graph LR
+    subgraph "Redux Store Countries State"
+        State[Countries State]
+
+        State --> Items["items: Country[]"]
+        State --> FilteredItems["filteredItems: Country[]"]
+        State --> Filters["filters: CountriesFilters"]
+        State --> Pagination["pagination: PaginationState"]
+        State --> Languages["availableLanguages: string[]"]
+        State --> Loading["loading: boolean"]
+        State --> Error["error: string | null"]
+
+        Filters --> SearchTerm["searchTerm: string"]
+        Filters --> Continents["continents: string[]"]
+        Filters --> Language["language: string"]
+
+        Pagination --> CurrentPage["currentPage: number"]
+        Pagination --> ItemsPerPage["itemsPerPage: number"]
+        Pagination --> TotalPages["totalPages: number"]
+    end
+
+    subgraph "Actions"
+        FetchRequest[fetchCountriesRequest]
+        FetchSuccess[fetchCountriesSuccess]
+        FetchFailure[fetchCountriesFailure]
+        SetSearch[setSearchTerm]
+        SetContinents[setContinents]
+        SetLanguage[setLanguage]
+        ApplyFilters[applyFilters]
+        ClearFilters[clearFilters]
+        SetPage[setPage]
+        NextPage[nextPage]
+        PrevPage[prevPage]
+    end
+
+    subgraph "Sagas Side Effects"
+        FetchSaga[fetchCountriesSaga]
+    end
+
+    subgraph "Hooks"
+        UseCountries[useCountries<br/>Redux + Debounce]
+        UseCountryDetail[useCountryDetail<br/>Local State + Service]
+        UseDebounce[useDebounce<br/>300ms delay]
+        UseMediaQuery[useMediaQuery<br/>Responsive breakpoints]
+    end
+
+    FetchRequest --> FetchSaga
+
+    FetchSaga --> FetchSuccess
+    FetchSaga --> FetchFailure
+
+    FetchSuccess --> Items
+    FetchSuccess --> FilteredItems
+    FetchSuccess --> Languages
+
+    SetSearch --> SearchTerm
+    SetContinents --> Continents
+    SetLanguage --> Language
+
+    SearchTerm --> ApplyFilters
+    Continents --> ApplyFilters
+    Language --> ApplyFilters
+
+    ApplyFilters --> FilteredItems
+    ApplyFilters --> CurrentPage
+    ClearFilters --> Filters
+
+    SetPage --> CurrentPage
+    NextPage --> CurrentPage
+    PrevPage --> CurrentPage
+
+    State --> UseCountries
+
+    classDef stateNode fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef actionNode fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef sagaNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef hookNode fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+
+    class State,Items,FilteredItems,Filters,Languages,Loading,Error,SearchTerm,Continents,Language,Pagination,CurrentPage,ItemsPerPage,TotalPages stateNode
+    class FetchRequest,FetchSuccess,FetchFailure,SetSearch,SetContinents,SetLanguage,ApplyFilters,ClearFilters,SetPage,NextPage,PrevPage actionNode
+    class FetchSaga sagaNode
+    class UseCountries,UseCountryDetail,UseDebounce,UseMediaQuery hookNode

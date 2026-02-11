@@ -1,0 +1,58 @@
+sequenceDiagram
+    participant User
+    participant Page
+    participant Hook
+    participant Redux
+    participant Saga
+    participant Service
+    participant Repository
+    participant API
+    participant Transformer
+
+    Note over User,Transformer: Initial Load Flow
+
+    User->>Page: Opens Application
+    Page->>Hook: useCountries()
+    Hook->>Redux: dispatch(fetchCountriesRequest())
+    Redux->>Saga: Trigger fetchCountriesSaga
+    Saga->>Service: getAllCountries()
+    Service->>Repository: fetchAll()
+    Repository->>API: GET /all?fields=...
+    API-->>Repository: CountryApiResponse[]
+    Repository-->>Service: CountryApiResponse[]
+    Service->>Transformer: toDomainList()
+    Transformer-->>Service: Country[]
+    Service-->>Saga: Country[]
+    Saga->>Redux: dispatch(fetchCountriesSuccess())
+    Saga->>Service: extractUniqueLanguages()
+    Service-->>Saga: string[]
+    Saga->>Redux: dispatch(setAvailableLanguages())
+    Redux-->>Hook: Updated State
+    Hook-->>Page: countries, languages, loading
+    Page-->>User: Display Countries Grid
+
+    Note over User,Transformer: Filter Flow
+
+    User->>Page: Types in Search
+    Page->>Hook: handleSearchChange()
+    Hook->>Redux: dispatch(setSearchTerm())
+    Redux->>Redux: applyFilters()
+    Redux-->>Hook: filteredItems
+    Hook-->>Page: Updated countries
+    Page-->>User: Display Filtered Results
+
+    Note over User,Transformer: Country Details Flow
+
+    User->>Page: Clicks Country Card
+    Page->>Page: Navigate to /country/[code]
+    Page->>Hook: useCountryDetail(code)
+    Hook->>Service: getCountryByCode(code)
+    Service->>Repository: fetchByCode(code)
+    Repository->>API: GET /alpha/{code}
+    API-->>Repository: CountryApiResponse
+    Repository-->>Service: CountryApiResponse
+    Service->>Transformer: toDomain()
+    Transformer-->>Service: Country
+    Service-->>Hook: Country
+    Hook-->>Page: country, loading, error
+    Page-->>User: Display Country Details

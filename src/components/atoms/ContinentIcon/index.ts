@@ -1,0 +1,1 @@
+export { ContinentIcon } from './ContinentIcon'
