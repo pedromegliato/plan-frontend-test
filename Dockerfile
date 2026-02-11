@@ -9,6 +9,8 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
+ARG NEXT_PUBLIC_COUNTRIES_API_URL=https://restcountries.com/v3.1
+ENV NEXT_PUBLIC_COUNTRIES_API_URL=$NEXT_PUBLIC_COUNTRIES_API_URL
 RUN npm run build
 
 FROM base AS runner
