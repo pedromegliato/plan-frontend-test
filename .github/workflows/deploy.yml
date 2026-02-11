@@ -38,8 +38,20 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            # Criar diretório se não existir
+            mkdir -p /opt/plan-frontend-test
             cd /opt/plan-frontend-test
-            git pull origin main
+
+            # Clone ou pull do repositório
+            if [ ! -d ".git" ]; then
+              echo "Cloning repository..."
+              git clone https://github.com/pedromegliato/plan-frontend-test.git .
+            else
+              echo "Pulling latest changes..."
+              git pull origin main
+            fi
+
+            # Deploy com Docker
             docker-compose -f docker-compose.prod.yml down
             docker-compose -f docker-compose.prod.yml up -d --build
             docker image prune -f
