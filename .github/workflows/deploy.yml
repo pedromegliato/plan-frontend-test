@@ -55,6 +55,9 @@ jobs:
               git clean -fd
             fi
 
+            # Parar Nginx da máquina para liberar porta 80
+            sudo systemctl stop nginx || true
+
             # Deploy com Docker
             docker-compose -f docker-compose.prod.yml down
             docker-compose -f docker-compose.prod.yml up -d --build
